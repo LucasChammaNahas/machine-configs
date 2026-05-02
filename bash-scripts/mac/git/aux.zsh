@@ -1,10 +1,10 @@
-function _git_file_selector {
+function _git_run_on_files {
     local git_command="$1"
     local flags="$2"
     shift 2
 
     if [[ $# -eq 0 ]]; then
-        echo "Usage: tt <letter> [letter...]"
+        echo "Wrong use of _git_run_on_files: no file letters provided."
         return 1
     fi
     

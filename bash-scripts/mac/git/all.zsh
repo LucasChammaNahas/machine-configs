@@ -3,34 +3,39 @@
 # ------------------------------------------------------------------------------------------------
 unalias g
 function g {
-    if is_git_repo; then
-        _show_branch
-        
-        local files=()
-        while IFS= read -r line; do
-            local f="${line:3}"
-            f="${f//\"/}"  # strip quotes
-            files+=("$f")
-        done < <(git status --short)
-        
-        local status_output
-        status_output=$(git -c color.status=always status --show-stash)
-        
-        local ESC=$'\x1b'
-        local i=0
-        for file in "${files[@]}"; do
-            local letter=$(printf "\\$(printf '%03o' $((97 + i)))")
-            status_output=$(echo "$status_output" | sed -E "s|^([[:space:]]*)($ESC\[[0-9;]*m)?(modified:[[:space:]]+)?($file)|\1\2[$letter] \4|")
-            i=$((i + 1))
-        done
-        
-        echo "$status_output" \
-            | grep -v '^\s*(use ' \
-            | grep -v '^no changes added to commit' \
-            | sed -E "s|^(Changes to be committed:)|$(printf '\033[32m')\1$(printf '\033[m')|" \
-            | sed -E "s|^(Changes not staged for commit:)|$(printf '\033[31m')\1$(printf '\033[m')|" \
-            | sed -E "s|^(Untracked files:)|$(printf '\033[33m')\1$(printf '\033[m')|"
+    if ! is_git_repo; then
+        echo "Not a git repository"
+        return 1
     fi
+    _show_branch
+    
+    local files=()
+    while IFS= read -r line; do
+        local f="${line:3}"
+        f="${f//\"/}"
+        files+=("$f")
+    done < <(git status --short)
+    
+    local status_output
+    status_output=$(git -c color.status=always status --show-stash)
+    
+    local ESC=$'\x1b'
+    local i=0
+    for file in "${files[@]}"; do
+        local letter=$(printf "\\$(printf '%03o' $((97 + i)))")
+        status_output=$(echo "$status_output" | sed -E "s|^([[:space:]]*)($ESC\[[0-9;]*m)?(modified:[[:space:]]+)?($file)|\1\2[$letter] \4|")
+        i=$((i + 1))
+    done
+    
+    echo "$status_output" \
+        | grep -v '^\s*(use ' \
+        | grep -v '^no changes added to commit' \
+        | grep -v '^Changes to be committed:' \
+        | grep -v '^Changes not staged for commit:' \
+        | grep -v '^Untracked files:' \
+        | grep -v '^On branch' \
+        | grep -v '^Your branch' \
+        | grep -v '^nothing to commit' \
 }
 
 unalias gg
@@ -46,10 +51,15 @@ function gg {
 function a {
     if [ -z "$1" ]; then
         git add .
+    elif [[ "$1" == "-u" ]]; then
+        git ls-files --others --exclude-standard | xargs git add
+    elif [[ "$1" == "-t" ]]; then
+        git add -u
     else
-        git add "$@"
+        _git_run_on_files "git add" "" "$@"
     fi
-    git_status
+
+    g
 }
 
 function ua {
@@ -170,10 +180,14 @@ function ff {
 # ------------------------------------------------------------------------------------------------
 function d {
     if [ -z "$1" ]; then
-        git diff --color-words
+        git diff
+    elif [[ "$1" == "-v" ]]; then
+        git diff HEAD
     else
-        git diff --color-words "$@"
+        _git_run_on_files "git diff HEAD" "" "$@"
     fi
+    
+    g
 }
 
 function dd {
