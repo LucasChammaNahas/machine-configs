@@ -1,20 +1,48 @@
-# Git 
+# -------------------------------------------------------------------------------------------------
+# GIT STATUS
+# ------------------------------------------------------------------------------------------------
 unalias g
 function g {
-    echo ''
-    echo -e "\033[1m\033[38;2;252;196;106m[ $(git branch --show-current) ]\033[0m"
-    echo ''
-    git status --show-stash 
+    if is_git_repo; then
+        _show_branch
+        
+        local files=()
+        while IFS= read -r line; do
+            local f="${line:3}"
+            f="${f//\"/}"  # strip quotes
+            files+=("$f")
+        done < <(git status --short)
+        
+        local status_output
+        status_output=$(git -c color.status=always status --show-stash)
+        
+        local ESC=$'\x1b'
+        local i=0
+        for file in "${files[@]}"; do
+            local letter=$(printf "\\$(printf '%03o' $((97 + i)))")
+            status_output=$(echo "$status_output" | sed -E "s|^([[:space:]]*)($ESC\[[0-9;]*m)?(modified:[[:space:]]+)?($file)|\1\2[$letter] \4|")
+            i=$((i + 1))
+        done
+        
+        echo "$status_output" \
+            | grep -v '^\s*(use ' \
+            | grep -v '^no changes added to commit' \
+            | sed -E "s|^(Changes to be committed:)|$(printf '\033[32m')\1$(printf '\033[m')|" \
+            | sed -E "s|^(Changes not staged for commit:)|$(printf '\033[31m')\1$(printf '\033[m')|" \
+            | sed -E "s|^(Untracked files:)|$(printf '\033[33m')\1$(printf '\033[m')|"
+    fi
 }
 
 unalias gg
 function gg {
-    echo ''
-    echo -e "\033[1m\033[38;2;252;196;106m[ $(git branch --show-current) ]\033[0m"
-    echo ''
-    git status --show-stash --verbose 
+    _show_branch
+    git status --show-stash "$@" 
 }
 
+
+# -------------------------------------------------------------------------------------------------
+# GIT ADD
+# ------------------------------------------------------------------------------------------------
 function a {
     if [ -z "$1" ]; then
         git add .
@@ -33,6 +61,10 @@ function ua {
     git_status
 }
 
+
+# -------------------------------------------------------------------------------------------------
+# GIT COMMIT
+# ------------------------------------------------------------------------------------------------
 function c {
     if [ -z "$1" ]; then
         echo "Please provide a commit message."
@@ -59,6 +91,10 @@ function uc {
     git_status
 }
 
+
+# -------------------------------------------------------------------------------------------------
+# GIT PULL
+# ------------------------------------------------------------------------------------------------
 function p {
     git pull \
         --verbose \
@@ -90,6 +126,10 @@ function pp {
     git -C ~/projects/eyf-new-backend pull
 }
 
+
+# -------------------------------------------------------------------------------------------------
+# GIT PUSH
+# ------------------------------------------------------------------------------------------------
 function push {
     echo -e "\033[1m\033[38;2;252;196;106m-- EYF --\033[0m"
     git push --verbose --progress
@@ -99,6 +139,10 @@ function push {
     git_status
 }
 
+
+# -------------------------------------------------------------------------------------------------
+# GIT FETCH
+# ------------------------------------------------------------------------------------------------
 function f {
     git fetch \
         --verbose \
@@ -120,6 +164,10 @@ function ff {
     git -C ~/projects/eyf-dashboard-backend fetch
 }
 
+
+# -------------------------------------------------------------------------------------------------
+# GIT DIFF
+# ------------------------------------------------------------------------------------------------
 function d {
     if [ -z "$1" ]; then
         git diff --color-words
@@ -149,24 +197,24 @@ function nuke {
     fi
 }
 
+
+# -------------------------------------------------------------------------------------------------
+# GIT LOG
+# ------------------------------------------------------------------------------------------------
 function log {
     git log \
         --pretty=format:"%C(yellow)%h%C(reset) %C(blue)%an%C(reset) %C(green)%ar%C(reset) %C(magenta)%ad%C(reset)%n  %s%n" \
         --date=format:"%d/%m/%Y %H:%M"
 }
 
+
+# -------------------------------------------------------------------------------------------------
+# GIT BRANCH
+# ------------------------------------------------------------------------------------------------
 function b {
     if [ -z "$1" ]; then
         git branch -a
     else
         git checkout "$@"
     fi
-}
-
-# Auxiliary
-function git_status {
-    echo ''
-    echo '----------------------------------------------------------'
-    echo ''
-    git status --show-stash 
 }
