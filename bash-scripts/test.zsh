@@ -1,3 +1,0 @@
-function duck {
-  echo "pato!"
-}

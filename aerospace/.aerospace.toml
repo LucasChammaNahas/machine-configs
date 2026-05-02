@@ -1,0 +1,192 @@
+config-version = 2
+after-startup-command = []
+start-at-login = true
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+accordion-padding = 0
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'auto'
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+automatically-unhide-macos-hidden-apps = true
+
+persistent-workspaces = [
+    '1-claude',
+    '2-gemini',
+    '3-null',
+    '4-gpt',
+    '5-null',
+    '6-null',
+    '7-null',
+    '8-youtube',
+    '9-null',
+    '0-null',
+    'q-whatsapp',
+    'w-gmail',
+    'e-drive',
+    'r-null',
+    't-null',
+    'a-terminal-frontend',
+    's-terminal-claude-frontend',
+    'd-terminal-claude-backend',
+    'f-terminal-backend',
+    'g-music',
+    'z-parrakat-chat',
+    'x-parrakat-gmail',
+    'c-parrakat-drive',
+    'v-parrakat-meet',
+    'b-github',
+    'y-null',
+    'u-null',
+    'i-null',
+    'o-null',
+    'p-null',
+    'h-figma',
+    'j-localhost',
+    'k-staging',
+    'l-notion',
+    '(semicolon)-lucas',
+    'n-vscode-frontend',
+    'm-vscode-backend',
+    '(comma)-insomnia',
+    '(period)-dbeaver',
+    '(slash)-vscode-config',
+]
+
+on-mode-changed = []
+[key-mapping]
+    preset = 'qwerty'
+
+[gaps]
+    inner.horizontal = 0
+    inner.vertical =   0
+    outer.top =        0
+    outer.bottom =     0
+    outer.left =       0
+    outer.right =      0
+
+
+
+# MAIN --------------------------------------------------------------------------------------------
+[mode.main.binding]
+    shift-ctrl-alt-minus = 'resize smart -50'
+    shift-ctrl-alt-equal = 'resize smart +50'
+    shift-ctrl-alt-space = 'mode service'
+    shift-alt-cmd-r = 'reload-config'
+
+    # NAVIGATION
+    shift-alt-cmd-j = 'focus left'
+    shift-alt-cmd-k = 'focus down'
+    shift-alt-cmd-i = 'focus up'
+    shift-alt-cmd-l = 'focus right'
+
+    shift-alt-cmd-u = 'move left'
+    shift-alt-cmd-o = 'move right'
+    shift-alt-cmd-h = 'move down'
+    shift-alt-cmd-y = 'move up'
+
+    shift-alt-cmd-p = 'layout floating'
+    shift-alt-cmd-n = 'layout tiling tiles'
+    shift-alt-cmd-m = 'layout tiling accordion'
+
+    # WORKSPACES
+    shift-ctrl-alt-1 = 'workspace 1-claude'
+    shift-ctrl-alt-2 = 'workspace 2-gemini'
+    shift-ctrl-alt-3 = 'workspace 3-null'
+    shift-ctrl-alt-4 = 'workspace 4-gpt'
+    shift-ctrl-alt-5 = 'workspace 5-null'
+    shift-ctrl-alt-6 = 'workspace 6-null'
+    shift-ctrl-alt-7 = 'workspace 7-null'
+    shift-ctrl-alt-8 = 'workspace 8-youtube'
+    shift-ctrl-alt-9 = 'workspace 9-null'
+    shift-ctrl-alt-0 = 'workspace 0-null'
+
+    shift-ctrl-alt-q = 'workspace q-whatsapp'
+    shift-ctrl-alt-w = 'workspace w-gmail'
+    shift-ctrl-alt-e = 'workspace e-drive'
+    shift-ctrl-alt-r = 'workspace r-null'
+    shift-ctrl-alt-t = 'workspace t-null'
+
+    shift-ctrl-alt-a = 'workspace a-terminal-frontend'
+    shift-ctrl-alt-s = 'workspace s-terminal-claude-frontend'
+    shift-ctrl-alt-d = 'workspace d-terminal-claude-backend'
+    shift-ctrl-alt-f = 'workspace f-terminal-backend'
+    shift-ctrl-alt-g = 'workspace g-music'
+
+    shift-ctrl-alt-z = 'workspace z-parrakat-chat'
+    shift-ctrl-alt-x = 'workspace x-parrakat-gmail'
+    shift-ctrl-alt-c = 'workspace c-parrakat-drive'
+    shift-ctrl-alt-v = 'workspace v-parrakat-meet'
+    shift-ctrl-alt-b = 'workspace b-github'
+
+    shift-ctrl-alt-y = 'workspace y-null'
+    shift-ctrl-alt-u = 'workspace u-null'
+    shift-ctrl-alt-i = 'workspace i-null'
+    shift-ctrl-alt-o = 'workspace o-null'
+    shift-ctrl-alt-p = 'workspace p-null'
+
+    shift-ctrl-alt-h = 'workspace h-figma'
+    shift-ctrl-alt-j = 'workspace j-localhost'
+    shift-ctrl-alt-k = 'workspace k-staging'
+    shift-ctrl-alt-l = 'workspace l-notion'
+    shift-ctrl-alt-semicolon = 'workspace (semicolon)-lucas'
+
+    shift-ctrl-alt-n = 'workspace n-vscode-frontend'
+    shift-ctrl-alt-m = 'workspace m-vscode-backend'
+    shift-ctrl-alt-comma = 'workspace (comma)-insomnia'
+    shift-ctrl-alt-period = 'workspace (period)-dbeaver'
+    shift-ctrl-alt-slash = 'workspace (slash)-vscode-config'
+
+
+# SERVICE -----------------------------------------------------------------------------------------
+[mode.service.binding]
+    esc = ['reload-config', 'mode main']
+    r = ['flatten-workspace-tree', 'mode main'] # reset layout
+    f = ['layout floating tiling', 'mode main'] # Toggle between floating and tiling layout
+    backspace = ['close-all-windows-but-current', 'mode main']
+
+    shift-ctrl-alt-1 = ['move-node-to-workspace 1-claude', 'mode main']
+    shift-ctrl-alt-2 = ['move-node-to-workspace 2-gemini', 'mode main']
+    shift-ctrl-alt-3 = ['move-node-to-workspace 3-null', 'mode main']
+    shift-ctrl-alt-4 = ['move-node-to-workspace 4-gpt', 'mode main']
+    shift-ctrl-alt-5 = ['move-node-to-workspace 5-null', 'mode main']
+    shift-ctrl-alt-6 = ['move-node-to-workspace 6-null', 'mode main']
+    shift-ctrl-alt-7 = ['move-node-to-workspace 7-null', 'mode main']
+    shift-ctrl-alt-8 = ['move-node-to-workspace 8-youtube', 'mode main']
+    shift-ctrl-alt-9 = ['move-node-to-workspace 9-null', 'mode main']
+    shift-ctrl-alt-0 = ['move-node-to-workspace 0-null', 'mode main']
+
+    shift-ctrl-alt-q = ['move-node-to-workspace q-whatsapp', 'mode main']
+    shift-ctrl-alt-w = ['move-node-to-workspace w-gmail', 'mode main']
+    shift-ctrl-alt-e = ['move-node-to-workspace e-drive', 'mode main']
+    shift-ctrl-alt-r = ['move-node-to-workspace r-null', 'mode main']
+    shift-ctrl-alt-t = ['move-node-to-workspace t-null', 'mode main']
+
+    shift-ctrl-alt-a = ['move-node-to-workspace a-terminal-frontend', 'mode main']
+    shift-ctrl-alt-s = ['move-node-to-workspace s-terminal-claude-frontend', 'mode main']
+    shift-ctrl-alt-d = ['move-node-to-workspace d-terminal-claude-backend', 'mode main']
+    shift-ctrl-alt-f = ['move-node-to-workspace f-terminal-backend', 'mode main']
+    shift-ctrl-alt-g = ['move-node-to-workspace g-music', 'mode main']
+
+    shift-ctrl-alt-z = ['move-node-to-workspace z-parrakat-chat', 'mode main']
+    shift-ctrl-alt-x = ['move-node-to-workspace x-parrakat-gmail', 'mode main']
+    shift-ctrl-alt-c = ['move-node-to-workspace c-parrakat-drive', 'mode main']
+    shift-ctrl-alt-v = ['move-node-to-workspace v-parrakat-meet', 'mode main']
+    shift-ctrl-alt-b = ['move-node-to-workspace b-github', 'mode main']
+
+    shift-ctrl-alt-y = ['move-node-to-workspace y-null', 'mode main']
+    shift-ctrl-alt-u = ['move-node-to-workspace u-null', 'mode main']
+    shift-ctrl-alt-i = ['move-node-to-workspace i-null', 'mode main']
+    shift-ctrl-alt-o = ['move-node-to-workspace o-null', 'mode main']
+    shift-ctrl-alt-p = ['move-node-to-workspace p-null', 'mode main']
+
+    shift-ctrl-alt-h = ['move-node-to-workspace h-figma', 'mode main']
+    shift-ctrl-alt-j = ['move-node-to-workspace j-localhost', 'mode main']
+    shift-ctrl-alt-k = ['move-node-to-workspace k-staging', 'mode main']
+    shift-ctrl-alt-l = ['move-node-to-workspace l-notion', 'mode main']
+    shift-ctrl-alt-semicolon = ['move-node-to-workspace (semicolon)-lucas', 'mode main']
+
+    shift-ctrl-alt-n = ['move-node-to-workspace n-vscode-frontend', 'mode main']
+    shift-ctrl-alt-m = ['move-node-to-workspace m-vscode-backend', 'mode main']
+    shift-ctrl-alt-comma = ['move-node-to-workspace (comma)-insomnia', 'mode main']
+    shift-ctrl-alt-period = ['move-node-to-workspace (period)-dbeaver', 'mode main']
+    shift-ctrl-alt-slash = ['move-node-to-workspace (slash)-vscode-config', 'mode main']
