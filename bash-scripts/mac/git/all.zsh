@@ -170,7 +170,3 @@ function git_status {
     echo ''
     git status --show-stash 
 }
-
-function t {
-    echo 'todo: not implemented yet'
-}
