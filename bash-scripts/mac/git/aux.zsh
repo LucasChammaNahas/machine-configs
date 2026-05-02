@@ -1,4 +1,3 @@
-
 function _git_status {
     if git rev-parse --git-dir > /dev/null 2>&1; then
         echo ''
@@ -27,9 +26,15 @@ function _git_status {
 }
 
 function tt {
+    if [[ $# -eq 0 ]]; then
+        echo "Usage: git_function <letter>"
+        return 1
+    fi
+
     local letter="$1"
     local files=($(git status --short | awk '{print $2}'))
-    local idx=$(( $(printf '%d' "'$letter") - 97 ))
+    # local idx=$(( $(printf '%d' "'$letter") - 97 ))
+    local idx=$(( $(printf '%d' "'$letter") - 96 ))
     local file="${files[$idx]}"
     
     if [ -z "$file" ]; then
@@ -37,16 +42,20 @@ function tt {
         return 1
     fi
     
+    echo "$file: $(_get_file_status "$file")"
+}
+
+function _get_file_status {
     # get the two-char porcelain status for this exact file
-    local status=$(git status --porcelain "$file" | cut -c1-2)
-    local staged="${status:0:1}"
-    local unstaged="${status:1:1}"
+    local git_status=$(git status --porcelain "$1" | cut -c1-2)
+    local staged="${git_status:0:1}"
+    local unstaged="${git_status:1:1}"
     
     local states=()
-    [[ "$status" == "??" ]] && states+=("untracked")
+    [[ "$git_status" == "??" ]] && states+=("untracked")
     [[ "$staged" =~ [MADRC] ]] && states+=("staged")
     [[ "$unstaged" =~ [MD] ]] && states+=("unstaged")
     [[ "$staged" == "U" || "$unstaged" == "U" ]] && states+=("conflicted")
     
-    echo "$file: ${states[@]}"
+    echo "${states[@]}"
 }
