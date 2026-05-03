@@ -8,34 +8,40 @@ function g {
         return 1
     fi
     _show_branch
-    
-    local files=()
-    while IFS= read -r line; do
-        local f="${line:3}"
-        f="${f//\"/}"
-        files+=("$f")
-    done < <(git status --short)
-    
-    local status_output
-    status_output=$(git -c color.status=always status --show-stash)
-    
-    local ESC=$'\x1b'
+
     local i=0
-    for file in "${files[@]}"; do
+    local last_group=""
+
+    while IFS= read -r line; do
+        local git_status="${line:0:2}"
+        local file="${line:3}"
+        file="${file//\"/}"
         local letter=$(printf "\\$(printf '%03o' $((97 + i)))")
-        status_output=$(echo "$status_output" | sed -E "s|^([[:space:]]*)($ESC\[[0-9;]*m)?(modified:[[:space:]]+)?($file)|\1\2[$letter] \4|")
+
+        local group=""
+        if [[ "$git_status" == "??" ]]; then
+            group="untracked"
+        elif [[ "${git_status:0:1}" =~ [MADRC] ]]; then
+            group="staged"
+        else
+            group="unstaged"
+        fi
+
+        if [[ "$group" != "$last_group" && -n "$last_group" ]]; then
+            echo ""
+        fi
+        last_group="$group"
+
+        if [[ "$group" == "untracked" ]]; then
+            echo -e "  \e[33m[$letter] $file\e[0m"
+        elif [[ "$group" == "staged" ]]; then
+            echo -e "  \e[32m[$letter] $file\e[0m"
+        else
+            echo -e "  \e[31m[$letter] $file\e[0m"
+        fi
+
         i=$((i + 1))
-    done
-    
-    echo "$status_output" \
-        | grep -v '^\s*(use ' \
-        | grep -v '^no changes added to commit' \
-        | grep -v '^Changes to be committed:' \
-        | grep -v '^Changes not staged for commit:' \
-        | grep -v '^Untracked files:' \
-        | grep -v '^On branch' \
-        | grep -v '^Your branch' \
-        | grep -v '^nothing to commit' \
+    done < <(git status --short)
 }
 
 unalias gg
