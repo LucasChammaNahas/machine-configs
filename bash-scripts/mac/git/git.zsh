@@ -125,6 +125,7 @@ function push {
     else
         git push --verbose --progress
     fi
+    _separator
     g
 }
 
