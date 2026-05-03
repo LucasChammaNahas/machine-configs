@@ -19,7 +19,7 @@ function g {
         local letter=$(printf "\\$(printf '%03o' $((97 + i)))")
 
         if [[ "$git_status" == "??" ]]; then
-            echo -e "  \e[33m[$letter] $file\e[0m"
+            echo -e "  \e[35m[$letter] $file\e[0m"
         elif [[ "${git_status:0:1}" =~ [MADRC] ]]; then
             echo -e "  \e[32m[$letter] $file\e[0m"
         elif [[ "${git_status:1:1}" =~ [MD] ]]; then
@@ -183,9 +183,6 @@ function d {
     else
         _git_run_on_files "git diff HEAD" "" "$@"
     fi
-    
-    _separator
-    g
 }
 
 
