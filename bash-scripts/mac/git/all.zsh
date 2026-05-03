@@ -10,39 +10,24 @@ function g {
     _show_branch
 
     local i=0
-    local last_group=""
-
     while IFS= read -r line; do
         local git_status="${line:0:2}"
         local file="${line:3}"
         file="${file//\"/}"
         local letter=$(printf "\\$(printf '%03o' $((97 + i)))")
 
-        local group=""
         if [[ "$git_status" == "??" ]]; then
-            group="untracked"
-        elif [[ "${git_status:0:1}" =~ [MADRC] ]]; then
-            group="staged"
-        else
-            group="unstaged"
-        fi
-
-        if [[ "$group" != "$last_group" && -n "$last_group" ]]; then
-            echo ""
-        fi
-        last_group="$group"
-
-        if [[ "$group" == "untracked" ]]; then
             echo -e "  \e[33m[$letter] $file\e[0m"
-        elif [[ "$group" == "staged" ]]; then
+        elif [[ "${git_status:0:1}" =~ [MADRC] ]]; then
             echo -e "  \e[32m[$letter] $file\e[0m"
-        else
+        elif [[ "${git_status:1:1}" =~ [MD] ]]; then
             echo -e "  \e[31m[$letter] $file\e[0m"
         fi
 
         i=$((i + 1))
     done < <(git status --short)
 }
+
 
 unalias gg
 function gg {
