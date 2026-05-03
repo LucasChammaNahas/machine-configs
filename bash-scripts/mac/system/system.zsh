@@ -28,7 +28,8 @@ function go {
 
     ls -l
 
-    if [ -d .git ]; then
-        git_status
+    if is_git_repo; then
+        _separator
+        g
     fi
 }

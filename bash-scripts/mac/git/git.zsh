@@ -98,19 +98,19 @@ function p {
 function pp {
     echo -e "\033[1m\033[38;2;252;196;106m-- FRONTEND --\033[0m"
     echo ''
-    git -C ~/projects/eyf-dashboard-frontend pull
+    git -C ~/projects/parrakat/eyf-dashboard-frontend pull
 
     _separator
 
     echo -e "\033[1m\033[38;2;252;196;106m-- BACKEND --\033[0m"
     echo ''
-    git -C ~/projects/eyf-dashboard-backend pull
+    git -C ~/projects/parrakat/eyf-dashboard-backend pull
 
     _separator
 
     echo -e "\033[1m\033[38;2;252;196;106m-- BACKEND MATHEUS --\033[0m"
     echo ''
-    git -C ~/projects/eyf-new-backend pull
+    git -C ~/projects/parrakat/eyf-new-backend pull
 }
 
 
