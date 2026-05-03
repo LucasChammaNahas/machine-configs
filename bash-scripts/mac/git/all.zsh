@@ -104,7 +104,7 @@ function uc {
 # GIT PULL
 # ------------------------------------------------------------------------------------------------
 function p {
-    git pull --verbose --stat --log
+    git pull --verbose --stat
     g
 }
 
@@ -248,6 +248,7 @@ function _git_handle_removal {
     for file_name in "$@"; do
         echo "  - $file_name"
     done
+    echo ''
 
     read "confirm?Are you sure? (y/n) [y] "
     local confirm=${confirm:-y}
@@ -262,13 +263,26 @@ function _git_handle_removal {
         if [[ "$file_status" == *"unstaged"* ]]; then
             git restore "$file_path"
         elif [[ "$file_status" == "untracked" ]]; then
-            git rm -rf "$file_path"
+            rm -rf "$file_path"
         else
             echo "Action not possible for file with status: $file_status"
         fi
     done
 }
 
+function nuke {
+    echo -e "\e[1;31m⚠️  This will destroy all changes!\e[0m"
+
+    read "confirm?Are you sure? (y/n) [y] "
+    local confirm=${confirm:-y}
+    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        git reset --hard HEAD
+        git clean -fd
+        echo "All changes nuked"
+        _separator
+        g
+    fi
+}
 
 # -------------------------------------------------------------------------------------------------
 # GIT LOG
