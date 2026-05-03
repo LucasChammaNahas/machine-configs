@@ -58,17 +58,16 @@ function a {
     else
         _git_run_on_files "git add" "" "$@"
     fi
-
     g
 }
 
-function ua {
+function u {
     if [ -z "$1" ]; then
         git restore --staged .
     else
-        git restore --staged "$@"
+        _git_run_on_files "git restore --staged" "" "$@"
     fi
-    git_status
+    g
 }
 
 
@@ -77,12 +76,11 @@ function ua {
 # ------------------------------------------------------------------------------------------------
 function c {
     if [ -z "$1" ]; then
-        echo "Please provide a commit message."
-        return 1
+        git commit
     else
         git commit -m "$@"
-        git_status
     fi
+    g
 }
 
 function ac {
@@ -92,13 +90,13 @@ function ac {
     else
         git add .
         git commit -m "$@"
-        git_status
+        g
     fi
 }
 
 function uc {
     git reset --soft HEAD~1
-    git_status
+    g
 }
 
 
@@ -106,12 +104,8 @@ function uc {
 # GIT PULL
 # ------------------------------------------------------------------------------------------------
 function p {
-    git pull \
-        --verbose \
-        --stat \
-        --log \
-        --compact-summary
-    git_status
+    git pull --verbose --stat --log
+    g
 }
 
 function pp {
@@ -119,18 +113,14 @@ function pp {
     echo ''
     git -C ~/projects/eyf-dashboard-frontend pull
 
-    echo ''
-    echo ''
-    echo '----------------------------------------------------------'
-    echo ''
+    _separator
+
     echo -e "\033[1m\033[38;2;252;196;106m-- BACKEND --\033[0m"
     echo ''
     git -C ~/projects/eyf-dashboard-backend pull
 
-    echo ''
-    echo ''
-    echo '----------------------------------------------------------'
-    echo ''
+    _separator
+
     echo -e "\033[1m\033[38;2;252;196;106m-- BACKEND MATHEUS --\033[0m"
     echo ''
     git -C ~/projects/eyf-new-backend pull
@@ -141,12 +131,31 @@ function pp {
 # GIT PUSH
 # ------------------------------------------------------------------------------------------------
 function push {
+    if _is_eyf; then
+        _push_eyf
+    else
+        git push --verbose --progress
+    fi
+    g
+}
+
+function _is_eyf {
+    local eyf_dirs=(
+        "$HOME/projects/parrakat/eyf-dashboard-backend"
+        "$HOME/projects/parrakat/eyf-dashboard-frontend"
+    )
+    for dir in "${eyf_dirs[@]}"; do
+        [[ "$PWD" == "$dir" ]] && return 0
+    done
+    return 1
+}
+
+function _push_eyf {
     echo -e "\033[1m\033[38;2;252;196;106m-- EYF --\033[0m"
     git push --verbose --progress
-    echo ''
+    _separator
     echo -e "\033[1m\033[38;2;252;196;106m-- PARRAKAT --\033[0m"
-    git push parrakat --verbose  --progress
-    git_status
+    git push parrakat --verbose --progress
 }
 
 
@@ -158,17 +167,16 @@ function f {
         --verbose \
         --all \
         --progress
-    git_status
+    g
 }
 
 function ff {
     echo -e "\033[1m\033[38;2;252;196;106m-- FRONTEND --\033[0m"
     echo ''
     git -C ~/projects/eyf-dashboard-frontend fetch
-    echo ''
-    echo ''
-    echo '----------------------------------------------------------'
-    echo ''
+
+    _separator
+
     echo -e "\033[1m\033[38;2;252;196;106m-- BACKEND --\033[0m"
     echo ''
     git -C ~/projects/eyf-dashboard-backend fetch
@@ -190,25 +198,75 @@ function d {
     g
 }
 
-function dd {
+
+# -------------------------------------------------------------------------------------------------
+# GIT REMOVE
+# ------------------------------------------------------------------------------------------------
+function r {
     if [ -z "$1" ]; then
-        git diff HEAD --color-words
+        echo "This function is too dangerous to allow no arguments. Please specify files to remove."
+
+    elif [ "$1" = "-t" ]; then
+        echo -e "\e[1;31m⚠️  git restore .\e[0m"
+        read "confirm?Are you sure? (y/n) [y] "
+        local confirm=${confirm:-y}
+        if [[ "$confirm" =~ ^[Yy]$ ]]; then
+            git restore .
+        fi
+        
+    elif [ "$1" = "-u" ]; then
+        echo -e "\e[1;31m⚠️  git clean -fd\e[0m"
+        read "confirm?Are you sure? (y/n) [y] "
+        local confirm=${confirm:-y}
+        if [[ "$confirm" =~ ^[Yy]$ ]]; then
+            git clean -fd
+        fi
+
+    elif [ "$1" = "-a" ]; then
+        echo -e "\e[1;31m⚠️  git restore . && git clean -fd\e[0m"
+        read "confirm?Are you sure? (y/n) [y] "
+        local confirm=${confirm:-y}
+        if [[ "$confirm" =~ ^[Yy]$ ]]; then
+            git restore .
+            git clean -fd
+        fi
+
     else
-        git diff HEAD --color-words "$@"
+        _git_run_on_files "_git_handle_removal" "" "$@"
     fi
+
+    _separator
+    g
 }
 
-function nuke {
-    echo -e "\033[1;31m⚠️  This will destroy all tracked changes!\033[0m"
-    read "confirm?Are you sure? (y/n) "
-    if [ "$confirm" = "y" ]; then
-        git reset --hard HEAD
-        git clean -fd
-        echo "All tracked changes nuked"
-        git_status
-    else
-        echo "Aborted"
+function _git_handle_removal {
+    if [[ $# -eq 0 ]]; then
+        return 1
     fi
+
+    echo -e "\e[1;31mFiles to be removed:\e[0m"
+    for file_name in "$@"; do
+        echo "  - $file_name"
+    done
+
+    read "confirm?Are you sure? (y/n) [y] "
+    local confirm=${confirm:-y}
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+        echo ''
+        echo "Aborting removal."
+        return 0
+    fi
+    
+    for file_path in "$@"; do
+        file_status=$(_get_file_status "$file_path")
+        if [[ "$file_status" == *"unstaged"* ]]; then
+            git restore "$file_path"
+        elif [[ "$file_status" == "untracked" ]]; then
+            git rm -rf "$file_path"
+        else
+            echo "Action not possible for file with status: $file_status"
+        fi
+    done
 }
 
 
@@ -231,4 +289,17 @@ function b {
     else
         git checkout "$@"
     fi
+}
+
+
+# -------------------------------------------------------------------------------------------------
+# GIT STASH
+# ------------------------------------------------------------------------------------------------
+function stash {
+    if [ -z "$1" ]; then
+        git stash -U
+    else
+        git stash "$@"
+    fi
+    g
 }
