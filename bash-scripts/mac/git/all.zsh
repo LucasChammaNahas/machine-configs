@@ -7,6 +7,8 @@ function g {
         echo "Not a git repository"
         return 1
     fi
+
+    git status --show-stash
     _show_branch
 
     local i=0
@@ -26,13 +28,7 @@ function g {
 
         i=$((i + 1))
     done < <(git status --short)
-}
 
-
-unalias gg
-function gg {
-    _show_branch
-    git status --show-stash "$@" 
 }
 
 
@@ -186,6 +182,7 @@ function d {
         _git_run_on_files "git diff HEAD" "" "$@"
     fi
     
+    _separator
     g
 }
 

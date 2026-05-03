@@ -51,7 +51,7 @@ function _separator {
 
 function _show_branch {
     echo ''
-    echo -e "\e[1;33m[ $(git branch --show-current) ]\e[0m"
+    echo -e "\e[1;36m[ $(git branch --show-current) ]\e[0m"
     echo ''
 }
 
