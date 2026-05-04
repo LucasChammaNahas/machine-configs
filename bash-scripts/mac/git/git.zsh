@@ -1,15 +1,9 @@
 # -------------------------------------------------------------------------------------------------
 # GIT STATUS
 # ------------------------------------------------------------------------------------------------
-unalias g
-function g {
-    if ! is_git_repo; then
-        echo "Not a git repository"
-        return 1
-    fi
-
-    git status --show-stash
-    _show_branch
+function _file_selector_log {
+    echo ''
+    _separator
 
     local i=0
     while IFS= read -r line; do
@@ -17,7 +11,6 @@ function g {
         local file="${line:3}"
         file="${file//\"/}"
         local letter=$(printf "\\$(printf '%03o' $((97 + i)))")
-
         if [[ "$git_status" == "??" ]]; then
             echo -e "  \e[35m[$letter] $file\e[0m"
         elif [[ "${git_status:0:1}" =~ [MADRC] ]]; then
@@ -25,10 +18,41 @@ function g {
         elif [[ "${git_status:1:1}" =~ [MD] ]]; then
             echo -e "  \e[31m[$letter] $file\e[0m"
         fi
-
         i=$((i + 1))
     done < <(git status --short)
 
+    _separator
+    echo ''
+}
+
+unalias g
+function g {
+    if ! _is_git_repo; then
+        echo "Not a git repository"
+        return 1
+    fi
+
+    echo ''
+    _show_branch
+    echo ''
+    git status | head -2
+    echo ''
+    _file_selector_log
+}
+
+unalias gg
+function gg {
+    if ! _is_git_repo; then
+        echo "Not a git repository"
+        return 1
+    fi
+
+    echo ''
+    _show_branch
+    echo ''
+    git status --show-stash 
+    echo ''
+    _file_selector_log
 }
 
 
@@ -45,6 +69,11 @@ function a {
     else
         _git_run_on_files "git add" "" "$@"
     fi
+    g
+}
+
+function aa {
+    git add "$@"
     g
 }
 
@@ -279,6 +308,13 @@ function log {
     git log \
         --pretty=format:"%C(yellow)%h%C(reset) %C(blue)%an%C(reset) %C(green)%ar%C(reset) %C(magenta)%ad%C(reset)%n  %s%n" \
         --date=format:"%d/%m/%Y %H:%M"
+}
+
+function logg {
+    git log \
+        --pretty=format:"%C(yellow)%h%C(reset) %C(blue)%an%C(reset) %C(green)%ar%C(reset) %C(magenta)%ad%C(reset)%n  %s%n" \
+        --date=format:"%d/%m/%Y %H:%M"\
+        --name-status
 }
 
 
