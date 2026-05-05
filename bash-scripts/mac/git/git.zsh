@@ -375,9 +375,16 @@ function stash {
     # mod
     # qq
     if [ -z "$1" ]; then
-        git stash -U
+        git stash
     else
         git stash "$@"
     fi
+    g
+}
+
+function pop {
+    # mod
+    # qq
+    git stash pop
     g
 }
