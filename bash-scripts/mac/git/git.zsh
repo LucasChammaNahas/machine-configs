@@ -1,10 +1,6 @@
 # -------------------------------------------------------------------------------------------------
 # GIT STATUS
 # ------------------------------------------------------------------------------------------------
-function _has_log_output {
-    [[ $(git status --short | wc -l) -gt 0 ]]
-}
-
 function _file_selector_log {
     if ! _has_log_output; then
         return
@@ -77,7 +73,7 @@ function a {
     elif [[ "$1" == "-t" ]]; then
         git add -u
     else
-        _git_run_on_files "git add" "" "$@"
+        _git_run_on_files "git add" "$@"
     fi
     g
 }
@@ -91,7 +87,7 @@ function u {
     if [ -z "$1" ]; then
         git restore --staged .
     else
-        _git_run_on_files "git restore --staged" "" "$@"
+        _git_run_on_files "git restore --staged" "$@"
     fi
     g
 }
@@ -221,7 +217,7 @@ function d {
     elif [[ "$1" == "-v" ]]; then
         git diff HEAD
     else
-        _git_run_on_files "git diff HEAD" "" "$@"
+        _git_run_on_files "git diff HEAD" "$@"
     fi
 }
 
@@ -259,7 +255,7 @@ function r {
         fi
 
     else
-        _git_run_on_files "_git_handle_removal" "" "$@"
+        _git_run_on_files "_git_handle_removal" "$@"
     fi
 
     _separator

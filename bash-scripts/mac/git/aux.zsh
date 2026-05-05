@@ -1,7 +1,6 @@
 function _git_run_on_files {
     local git_command="$1"
-    local flags="$2"
-    shift 2
+    shift 1
 
     if [[ $# -eq 0 ]]; then
         echo "Wrong use of _git_run_on_files: no file letters provided."
@@ -25,7 +24,7 @@ function _git_run_on_files {
         selected_files+=(\"$file\")
     done
     
-    eval $git_command ${selected_files[@]} $flags
+    eval $git_command ${selected_files[@]}
 }
 
 function _get_file_status {
@@ -53,4 +52,8 @@ function _show_branch {
 
 function _is_git_repo {
     git rev-parse --git-dir > /dev/null 2>&1
+}
+
+function _has_log_output {
+    [[ $(git status --short | wc -l) -gt 0 ]]
 }
