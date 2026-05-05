@@ -5,6 +5,21 @@ function _is_zsh {
     [[ -n "$ZSH_VERSION" ]]
 }
 
+function _confirm {
+    if _is_zsh; then
+        read "confirm?Are you sure? (y/n) [y] "
+    else
+        read -p "Are you sure? (y/n) [y] " confirm
+    fi
+
+    local confirm=${confirm:-y}
+
+    [[ "$confirm" =~ ^[Yy]$ ]]
+}
+
+# -------------------------------------------------------------------------------------------------
+# AUXILIARY FUNCTIONS
+# -------------------------------------------------------------------------------------------------
 function _label_to_index {
     local label=$1
     local idx

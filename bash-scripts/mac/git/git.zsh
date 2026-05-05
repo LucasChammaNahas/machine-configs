@@ -232,25 +232,19 @@ function r {
 
     elif [ "$1" = "-t" ]; then
         echo -e "\e[1;31m⚠️  git restore .\e[0m"
-        read "confirm?Are you sure? (y/n) [y] "
-        local confirm=${confirm:-y}
-        if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        if _confirm; then
             git restore .
         fi
-        
+
     elif [ "$1" = "-u" ]; then
         echo -e "\e[1;31m⚠️  git clean -fd\e[0m"
-        read "confirm?Are you sure? (y/n) [y] "
-        local confirm=${confirm:-y}
-        if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        if _confirm; then
             git clean -fd
         fi
 
     elif [ "$1" = "-a" ]; then
         echo -e "\e[1;31m⚠️  git restore . && git clean -fd\e[0m"
-        read "confirm?Are you sure? (y/n) [y] "
-        local confirm=${confirm:-y}
-        if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        if _confirm; then
             git restore .
             git clean -fd
         fi
@@ -289,9 +283,7 @@ function _git_handle_removal {
     done
     echo ''
 
-    read "confirm?Are you sure? (y/n) [y] "
-    local confirm=${confirm:-y}
-    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+    if ! _confirm; then
         echo ''
         echo "Aborting removal."
         return 0
@@ -311,13 +303,9 @@ function _git_handle_removal {
 
 function nuke {
     echo -e "\e[1;31m⚠️  This will destroy all changes!\e[0m"
-
-    read "confirm?Are you sure? (y/n) [y] "
-    local confirm=${confirm:-y}
-    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+    if _confirm; then
         git reset --hard HEAD
         git clean -fd
-        echo "All changes nuked"
         _separator
         g
     fi
