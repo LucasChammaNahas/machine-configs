@@ -38,6 +38,8 @@ function g {
         return 1
     fi
 
+    # mod
+    # qq
     echo ''
     _show_branch
     echo ''
@@ -53,6 +55,8 @@ function gg {
         return 1
     fi
 
+    # mod
+    # qq
     echo ''
     _show_branch
     echo ''
@@ -84,6 +88,8 @@ function aa {
 }
 
 function u {
+    # mod
+    # qq
     if [ -z "$1" ]; then
         git restore --staged .
     else
@@ -119,6 +125,8 @@ function ac {
 }
 
 function uc {
+    # mod
+    # qq
     git reset --soft HEAD~1
     g
 }
@@ -128,10 +136,13 @@ function uc {
 # GIT PULL
 # -------------------------------------------------------------------------------------------------
 function p {
+    # mod
+    # qq
     git pull --verbose --stat
     g
 }
 
+# Lucas Only
 function pp {
     echo -e "\033[1m\033[38;2;252;196;106m-- FRONTEND --\033[0m"
     echo ''
@@ -154,17 +165,23 @@ function pp {
 # -------------------------------------------------------------------------------------------------
 # GIT PUSH
 # -------------------------------------------------------------------------------------------------
+# Lucas 
 function push {
+    # mod
+    # qq
+
     if _is_eyf; then
         _push_eyf
     else
         git push --verbose --progress
     fi
+
     echo ''
     _separator
     g
 }
 
+# Lucas Only
 function _is_eyf {
     local eyf_dirs=(
         "$HOME/projects/parrakat/eyf-dashboard-backend"
@@ -176,6 +193,7 @@ function _is_eyf {
     return 1
 }
 
+# Lucas Only
 function _push_eyf {
     echo -e "\033[1m\033[38;2;252;196;106m-- EYF --\033[0m"
     git push --verbose --progress
@@ -189,6 +207,8 @@ function _push_eyf {
 # GIT FETCH
 # -------------------------------------------------------------------------------------------------
 function f {
+    # mod
+    # qq
     git fetch \
         --verbose \
         --all \
@@ -196,6 +216,7 @@ function f {
     g
 }
 
+# Lucas Only
 function ff {
     echo -e "\033[1m\033[38;2;252;196;106m-- FRONTEND --\033[0m"
     echo ''
@@ -227,6 +248,9 @@ function d {
 # GIT REMOVE
 # -------------------------------------------------------------------------------------------------
 function r {
+    # mod
+    # qq
+
     if [ -z "$1" ]; then
         echo "This function is too dangerous to allow no arguments. Please specify files to remove."
 
@@ -304,6 +328,8 @@ function _git_handle_removal {
 function nuke {
     echo -e "\e[1;31m⚠️  This will destroy all changes!\e[0m"
     if _confirm; then
+        # mod
+        # qq
         git reset --hard HEAD
         git clean -fd
         _separator
@@ -332,6 +358,8 @@ function logg {
 # GIT BRANCH
 # -------------------------------------------------------------------------------------------------
 function b {
+    # mod
+    # qq
     if [ -z "$1" ]; then
         git branch -a
     else
@@ -344,6 +372,8 @@ function b {
 # GIT STASH
 # -------------------------------------------------------------------------------------------------
 function stash {
+    # mod
+    # qq
     if [ -z "$1" ]; then
         git stash -U
     else
