@@ -1,12 +1,12 @@
 # -------------------------------------------------------------------------------------------------
 # AUXILIARY FUNCTIONS
 # ------------------------------------------------------------------------------------------------
-function _git_run_on_files {
+function _run_command_on_files {
     local git_command="$1"
     shift 1
 
     if [[ $# -eq 0 ]]; then
-        echo "Wrong use of _git_run_on_files: no file letters provided."
+        echo "Wrong use of _run_command_on_files: no file letters provided."
         return 1
     fi
     

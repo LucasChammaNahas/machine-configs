@@ -73,7 +73,7 @@ function a {
     elif [[ "$1" == "-t" ]]; then
         git add -u
     else
-        _git_run_on_files "git add" "$@"
+        _run_command_on_files "git add" "$@"
     fi
     g
 }
@@ -87,7 +87,7 @@ function u {
     if [ -z "$1" ]; then
         git restore --staged .
     else
-        _git_run_on_files "git restore --staged" "$@"
+        _run_command_on_files "git restore --staged" "$@"
     fi
     g
 }
@@ -217,7 +217,7 @@ function d {
     elif [[ "$1" == "-v" ]]; then
         git diff HEAD
     else
-        _git_run_on_files "git diff HEAD" "$@"
+        _run_command_on_files "git diff HEAD" "$@"
     fi
 }
 
@@ -255,7 +255,7 @@ function r {
         fi
 
     else
-        _git_run_on_files "_git_handle_removal" "$@"
+        _run_command_on_files "_git_handle_removal" "$@"
     fi
 
     _separator
