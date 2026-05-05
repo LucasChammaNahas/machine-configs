@@ -25,8 +25,7 @@ function _git_run_on_files {
         selected_files+=(\"$file\")
     done
     
-    
-    eval $git_command "${selected_files[@]}" $flags
+    eval $git_command ${selected_files[@]} $flags
 }
 
 function _get_file_status {
