@@ -22,8 +22,9 @@ function _git_run_on_files {
         if [[ -z "$file" ]]; then
             continue
         fi
-        selected_files+=("$file")
+        selected_files+=(\"$file\")
     done
+    
     
     eval $git_command "${selected_files[@]}" $flags
 }
@@ -44,17 +45,13 @@ function _get_file_status {
 }
 
 function _separator {
-    echo ''
     echo '----------------------------------------------------------'
-    echo ''
 }
 
 function _show_branch {
-    echo ''
     echo -e "\e[1;33m[ $(git branch --show-current) ]\e[0m"
-    echo ''
 }
 
-function is_git_repo {
+function _is_git_repo {
     git rev-parse --git-dir > /dev/null 2>&1
 }
