@@ -1,6 +1,37 @@
 # -------------------------------------------------------------------------------------------------
 # AUXILIARY FUNCTIONS
 # ------------------------------------------------------------------------------------------------
+function _is_zsh {
+    [[ -n "$ZSH_VERSION" ]]
+}
+
+function _label_to_index {
+    local label=$1
+    local idx
+    if [[ ${#label} -eq 1 ]]; then
+        idx=$(( $(printf '%d' "'$label") - 97 ))
+    else
+        local first=$(( $(printf '%d' "'${label:0:1}") - 97 ))
+        local second=$(( $(printf '%d' "'${label:1:1}") - 97 ))
+        idx=$(( 26 + first * 26 + second ))
+    fi
+    if _is_zsh; then
+        idx=$((idx + 1))
+    fi
+    echo $idx
+}
+
+function _index_to_label {
+    local i=$1
+    if [[ $i -lt 26 ]]; then
+        printf "\\$(printf '%03o' $((97 + i)))"
+    else
+        local first=$(( (i - 26) / 26 ))
+        local second=$(( (i - 26) % 26 ))
+        printf "\\$(printf '%03o' $((97 + first)))\\$(printf '%03o' $((97 + second)))"
+    fi
+}
+
 function _run_command_on_files {
     local git_command="$1"
     shift 1
@@ -9,7 +40,7 @@ function _run_command_on_files {
         echo "Wrong use of _run_command_on_files: no file letters provided."
         return 1
     fi
-    
+
     local all_git_status_files=()
     while IFS= read -r line; do
         local f="${line:3}"
@@ -19,30 +50,15 @@ function _run_command_on_files {
 
     local selected_files=()
     for letter in "$@"; do
-        local idx=$(( $(printf '%d' "'$letter") - 96 ))
+        local idx=$(_label_to_index "$letter")
         local file="${all_git_status_files[$idx]}"
         if [[ -z "$file" ]]; then
             continue
         fi
         selected_files+=(\"$file\")
     done
-    
-    eval $git_command ${selected_files[@]}
-}
 
-function _get_file_status {
-    # get the two-char porcelain status for this exact file
-    local git_status=$(git status --porcelain "$1" | cut -c1-2)
-    local staged="${git_status:0:1}"
-    local unstaged="${git_status:1:1}"
-    
-    local states=()
-    [[ "$git_status" == "??" ]] && states+=("untracked")
-    [[ "$staged" =~ [MADRC] ]] && states+=("staged")
-    [[ "$unstaged" =~ [MD] ]] && states+=("unstaged")
-    [[ "$staged" == "U" || "$unstaged" == "U" ]] && states+=("conflicted")
-    
-    echo "${states[@]}"
+    eval $git_command ${selected_files[@]}
 }
 
 

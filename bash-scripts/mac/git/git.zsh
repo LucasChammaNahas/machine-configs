@@ -15,7 +15,7 @@ function _file_selector_log {
         local git_status="${line:0:2}"
         local file="${line:3}"
         file="${file//\"/}"
-        local letter=$(printf "\\$(printf '%03o' $((97 + i)))")
+        local letter=$(_index_to_label $i)
         if [[ "$git_status" == "??" ]]; then
             echo -e "  \e[35m[$letter] $file\e[0m"
         elif [[ "${git_status:0:1}" =~ [MADRC] ]]; then
@@ -260,6 +260,21 @@ function r {
 
     _separator
     g
+}
+
+function _get_file_status {
+    # get the two-char porcelain status for this exact file
+    local git_status=$(git status --porcelain "$1" | cut -c1-2)
+    local staged="${git_status:0:1}"
+    local unstaged="${git_status:1:1}"
+    
+    local states=()
+    [[ "$git_status" == "??" ]] && states+=("untracked")
+    [[ "$staged" =~ [MADRC] ]] && states+=("staged")
+    [[ "$unstaged" =~ [MD] ]] && states+=("unstaged")
+    [[ "$staged" == "U" || "$unstaged" == "U" ]] && states+=("conflicted")
+    
+    echo "${states[@]}"
 }
 
 function _git_handle_removal {
