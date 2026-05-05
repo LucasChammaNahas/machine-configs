@@ -1,9 +1,18 @@
 # -------------------------------------------------------------------------------------------------
 # GIT STATUS
 # ------------------------------------------------------------------------------------------------
+function _has_log_output {
+    [[ $(git status --short | wc -l) -gt 0 ]]
+}
+
 function _file_selector_log {
+    if ! _has_log_output; then
+        return
+    fi
+
     echo ''
     _separator
+    echo ''
 
     local i=0
     while IFS= read -r line; do
@@ -21,6 +30,7 @@ function _file_selector_log {
         i=$((i + 1))
     done < <(git status --short)
 
+    echo ''
     _separator
     echo ''
 }
