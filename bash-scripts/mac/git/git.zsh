@@ -18,10 +18,10 @@ function _file_selector_log {
         local letter=$(_index_to_label $i)
 
         if [[ "$git_status" =~ ^(UU|AA|DD|AU|UD|UA|DU)$ ]]; then
-            _color pink "  [$letter] C  $file"
+            _color pink "  [$letter] !  $file"
 
         elif [[ "${git_status:0:1}" =~ [MADRC] && "${git_status:1:1}" =~ [MD] ]]; then
-            _color light_yellow "  [$letter] X  $file"
+            _color light_yellow "  [$letter] AM $file"
 
         elif [[ "$git_status" == "??" ]]; then
             _color deep_purple "  [$letter] U  $file"
@@ -52,7 +52,6 @@ function g {
         return 1
     fi
 
-    # mod
     # qq
     echo ''
     _show_branch
@@ -69,7 +68,6 @@ function gg {
         return 1
     fi
 
-    # mod
     # qq
     echo ''
     _show_branch
@@ -234,13 +232,13 @@ function f {
 function ff {
     echo -e "\033[1m\033[38;2;252;196;106m-- FRONTEND --\033[0m"
     echo ''
-    git -C ~/projects/eyf-dashboard-frontend fetch
+    git -C ~/projects/parrakat/eyf-dashboard-frontend fetch
 
     _separator
 
     echo -e "\033[1m\033[38;2;252;196;106m-- BACKEND --\033[0m"
     echo ''
-    git -C ~/projects/eyf-dashboard-backend fetch
+    git -C ~/projects/parrakat/eyf-dashboard-backend fetch
 }
 
 
@@ -269,19 +267,19 @@ function r {
         echo "This function is too dangerous to allow no arguments. Please specify files to remove."
 
     elif [ "$1" = "-t" ]; then
-        echo -e "\e[1;31m⚠️  git restore .\e[0m"
+        _color red "(git restore .) This will discard all unstaged changes, but keep staged ones"
         if _confirm; then
             git restore .
         fi
 
     elif [ "$1" = "-u" ]; then
-        echo -e "\e[1;31m⚠️  git clean -fd\e[0m"
+        _color red "(git clean -fd) This will remove all untracked files and directories"
         if _confirm; then
             git clean -fd
         fi
 
     elif [ "$1" = "-a" ]; then
-        echo -e "\e[1;31m⚠️  git restore . && git clean -fd\e[0m"
+        _color red "(git restore . && git clean -fd) This will discard all unstaged changes and remove all untracked files and directories"
         if _confirm; then
             git restore .
             git clean -fd
@@ -315,7 +313,7 @@ function _git_handle_removal {
         return 1
     fi
 
-    echo -e "\e[1;31mFiles to be removed:\e[0m"
+    _color red "Files to be removed:"
     for file_name in "$@"; do
         echo "  - $file_name"
     done
@@ -340,7 +338,7 @@ function _git_handle_removal {
 }
 
 function nuke {
-    echo -e "\e[1;31m⚠️  This will destroy all changes!\e[0m"
+    _color red "This will nuke everything!"
     if _confirm; then
         # mod
         # qq
