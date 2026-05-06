@@ -85,9 +85,31 @@ function _separator {
 }
 
 function _show_branch {
-    echo -e "\e[1;33m[ $(git branch --show-current) ]\e[0m"
+    _color yellow "[ $(git branch --show-current) ]"
 }
 
+function _color {
+    local color=$1
+    shift
+    local text="$*"
+    case $color in
+        black)        echo -e "\e[30m${text}\e[0m" ;;
+        red)          echo -e "\e[31m${text}\e[0m" ;;
+        green)        echo -e "\e[32m${text}\e[0m" ;;
+        yellow)       echo -e "\e[33m${text}\e[0m" ;;
+        blue)         echo -e "\e[34m${text}\e[0m" ;;
+        magenta)      echo -e "\e[35m${text}\e[0m" ;;
+        cyan)         echo -e "\e[36m${text}\e[0m" ;;
+        white)        echo -e "\e[37m${text}\e[0m" ;;
+        deep_blue)    echo -e "\e[38;5;63m${text}\e[0m" ;;
+        deep_purple)  echo -e "\e[38;5;93m${text}\e[0m" ;;
+        purple)       echo -e "\e[38;5;129m${text}\e[0m" ;;
+        pink)         echo -e "\e[38;5;201m${text}\e[0m" ;;
+        orange)       echo -e "\e[38;5;209m${text}\e[0m" ;;
+        light_yellow) echo -e "\e[38;5;227m${text}\e[0m" ;;
+        *)            echo -e "${text}" ;;
+    esac
+}
 
 # -------------------------------------------------------------------------------------------------
 # GIT CHECKS

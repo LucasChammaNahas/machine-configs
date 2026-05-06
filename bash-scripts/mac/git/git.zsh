@@ -16,13 +16,27 @@ function _file_selector_log {
         local file="${line:3}"
         file="${file//\"/}"
         local letter=$(_index_to_label $i)
-        if [[ "$git_status" == "??" ]]; then
-            echo -e "  \e[35m[$letter] $file\e[0m"
+
+        if [[ "$git_status" =~ ^(UU|AA|DD|AU|UD|UA|DU)$ ]]; then
+            _color pink "  [$letter] C  $file"
+
+        elif [[ "${git_status:0:1}" =~ [MADRC] && "${git_status:1:1}" =~ [MD] ]]; then
+            _color light_yellow "  [$letter] X  $file"
+
+        elif [[ "$git_status" == "??" ]]; then
+            _color deep_purple "  [$letter] U  $file"
+
         elif [[ "${git_status:0:1}" =~ [MADRC] ]]; then
-            echo -e "  \e[32m[$letter] $file\e[0m"
+            _color green "  [$letter] A  $file"
+
         elif [[ "${git_status:1:1}" =~ [MD] ]]; then
-            echo -e "  \e[31m[$letter] $file\e[0m"
+            _color red "  [$letter] M  $file"
+
+        else
+            _color white "  [$letter] ?  $file"
+
         fi
+
         i=$((i + 1))
     done < <(git status --short)
 
