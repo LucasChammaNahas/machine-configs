@@ -22,6 +22,7 @@ function go {
         f) builtin cd ~/projects/parrakat/eyf-dashboard-frontend ;;
         b) builtin cd ~/projects/parrakat/eyf-dashboard-backend ;;
         m) builtin cd ~/projects/parrakat/eyf-new-backend ;;
+        w) builtin cd ~/projects/parrakat/parrakat-website ;;
 
         *) builtin cd "$@" ;;
     esac
