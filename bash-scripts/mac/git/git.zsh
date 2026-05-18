@@ -1,50 +1,6 @@
 # -------------------------------------------------------------------------------------------------
 # GIT STATUS
 # -------------------------------------------------------------------------------------------------
-function _file_selector_log {
-    if ! _has_log_output; then
-        return
-    fi
-
-    echo ''
-    _separator
-    echo ''
-
-    local i=0
-    while IFS= read -r line; do
-        local git_status="${line:0:2}"
-        local file="${line:3}"
-        file="${file//\"/}"
-        local letter=$(_index_to_label $i)
-
-        if [[ "$git_status" =~ ^(UU|AA|DD|AU|UD|UA|DU)$ ]]; then
-            _color pink "  [$letter] !  $file"
-
-        elif [[ "${git_status:0:1}" =~ [MADRC] && "${git_status:1:1}" =~ [MD] ]]; then
-            _color light_yellow "  [$letter] AM $file"
-
-        elif [[ "$git_status" == "??" ]]; then
-            _color deep_purple "  [$letter] U  $file"
-
-        elif [[ "${git_status:0:1}" =~ [MADRC] ]]; then
-            _color green "  [$letter] A  $file"
-
-        elif [[ "${git_status:1:1}" =~ [MD] ]]; then
-            _color red "  [$letter] M  $file"
-
-        else
-            _color white "  [$letter] ?  $file"
-
-        fi
-
-        i=$((i + 1))
-    done < <(git status --short)
-
-    echo ''
-    _separator
-    echo ''
-}
-
 unalias g
 function g {
     if ! _is_git_repo; then
@@ -86,7 +42,7 @@ function a {
         git add .
     elif [[ "$1" == "-u" ]]; then
         git ls-files --others --exclude-standard | xargs git add
-    elif [[ "$1" == "-t" ]]; then
+    elif [[ "$1" == "-m" ]]; then
         git add -u
     else
         _run_command_on_files "git add" "$@"
@@ -101,7 +57,6 @@ function aa {
 
 function u {
     # mod
-    # qq
     if [ -z "$1" ]; then
         git restore --staged .
     else
@@ -138,7 +93,6 @@ function ac {
 
 function uc {
     # mod
-    # qq
     git reset --soft HEAD~1
     g
 }
@@ -149,9 +103,8 @@ function uc {
 # -------------------------------------------------------------------------------------------------
 function p {
     # mod
-    # qq
     git pull --verbose --stat
-    g
+    gg
 }
 
 # Lucas Only
@@ -180,7 +133,6 @@ function pp {
 # Lucas 
 function push {
     # mod
-    # qq
 
     if _is_eyf; then
         _push_eyf
@@ -190,7 +142,7 @@ function push {
 
     echo ''
     _separator
-    g
+    gg
 }
 
 # Lucas Only
@@ -220,12 +172,12 @@ function _push_eyf {
 # -------------------------------------------------------------------------------------------------
 function f {
     # mod
-    # qq
+
     git fetch \
         --verbose \
         --all \
         --progress
-    g
+    gg
 }
 
 # Lucas Only
@@ -261,7 +213,6 @@ function d {
 # -------------------------------------------------------------------------------------------------
 function r {
     # mod
-    # qq
 
     if [ -z "$1" ]; then
         echo "This function is too dangerous to allow no arguments. Please specify files to remove."
@@ -345,7 +296,7 @@ function nuke {
         git reset --hard HEAD
         git clean -fd
         _separator
-        g
+        gg
     fi
 }
 
@@ -353,29 +304,64 @@ function nuke {
 # GIT LOG
 # -------------------------------------------------------------------------------------------------
 function log {
+    echo ''
+    _color pink "Commit count: $(git rev-list --count HEAD)"
+    echo ''
     git log \
         --pretty=format:"%C(yellow)%h%C(reset) %C(blue)%an%C(reset) %C(green)%ar%C(reset) %C(magenta)%ad%C(reset)%n  %s%n" \
         --date=format:"%d/%m/%Y %H:%M"
 }
 
 function logg {
+    echo ''
+    _color pink "Commit count: $(git rev-list --count HEAD)"
+    echo ''
     git log \
         --pretty=format:"%C(yellow)%h%C(reset) %C(blue)%an%C(reset) %C(green)%ar%C(reset) %C(magenta)%ad%C(reset)%n  %s%n" \
         --date=format:"%d/%m/%Y %H:%M"\
         --name-status
 }
 
-
 # -------------------------------------------------------------------------------------------------
 # GIT BRANCH
 # -------------------------------------------------------------------------------------------------
 function b {
-    # mod
-    # qq
-    if [ -z "$1" ]; then
+    if [ $# -eq 0 ]; then
+        echo ''
         git branch -a
+        echo ''
     else
-        git checkout "$@"
+        mod
+        git switch "$@"
+        g
+    fi
+}
+
+function bdiff {
+    if [ $# -lt 1 ] || [ $# -gt 2 ]; then
+        echo "Usage: bdiff <branch1> [branch2]"
+        return 1
+    fi
+
+    local branch1="$1"
+    local branch2="${2:-HEAD}"
+
+    read left right < <(git rev-list --left-right --count "$branch1"..."$branch2")
+
+    if [ "$left" -eq 0 ] && [ "$right" -eq 0 ]; then
+        _color green "✓ $branch1 and $branch2 are in sync"
+        echo ''
+    elif [ "$left" -eq 0 ]; then
+        _color orange "$branch1 is behind $branch2 by $right commit(s)"
+        echo ''
+    elif [ "$right" -eq 0 ]; then
+        _color orange "$branch2 is behind $branch1 by $left commit(s)"
+        echo ''
+    else
+        _color red "✗ branches have diverged"
+        echo "  $branch1 is ahead by $left commit(s)"
+        echo "  $branch2 is ahead by $left commit(s)"
+        echo ''
     fi
 }
 
@@ -385,7 +371,6 @@ function b {
 # -------------------------------------------------------------------------------------------------
 function stash {
     # mod
-    # qq
     if [ -z "$1" ]; then
         git stash
     else
@@ -396,7 +381,6 @@ function stash {
 
 function pop {
     # mod
-    # qq
     git stash pop
     g
 }
