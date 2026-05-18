@@ -76,12 +76,75 @@ function _run_command_on_files {
     eval $git_command ${selected_files[@]}
 }
 
+function _file_selector_log {
+    if ! _has_log_output; then
+        return
+    fi
+
+    echo ''
+    _separator
+    echo ''
+
+    local -A counts=(
+        [unstaged]=0
+        [staged]=0
+        [untracked]=0
+    )
+    local i=0
+    while IFS= read -r line; do
+        local index_status="${line:0:1}"
+        local worktree_status="${line:1:1}"
+        local file="${line:3}"
+        file="${file//\"/}"
+        local letter=$(_index_to_label $i)
+        local git_status="${index_status}${worktree_status}"
+        local code="  ($letter) [$git_status]  $file"
+
+        # 1. Merge conflicts
+        if [[ "$index_status" == "U" || "$worktree_status" == "U" || "$git_status" == "AA" || "$git_status" == "DD" ]]; then
+            _color pink "$code"
+            ((counts[conflict]++))
+
+        # 2. Untracked
+        elif [[ "$git_status" == "??" ]]; then
+            _color blue "$code"
+            ((counts[untracked]++))
+
+        # 3. Both staged AND unstaged (show both letters)
+        elif [[ "$index_status" =~ [MADRC] && "$worktree_status" =~ [MD] ]]; then
+            _color light_yellow "$code"
+            ((counts[staged]++))
+            ((counts[unstaged]++))
+
+        # 4. Staged only (show the index letter)
+        elif [[ "$index_status" =~ [MADRC] ]]; then
+            _color green "$code"
+            ((counts[staged]++))
+
+        # 5. Unstaged only (show the worktree letter)
+        elif [[ "$worktree_status" =~ [MD] ]]; then
+            _color red "$code"
+            ((counts[unstaged]++))
+
+        else
+            _color white "$code"
+        fi
+
+        i=$((i + 1))
+    done < <(git status --short -u)
+
+    echo ''
+    _separator
+    _color magenta "   Working (${counts[unstaged]}) | Index (${counts[staged]}) | Untracked (${counts[untracked]}) | Total ($i)"
+    echo ''
+}
+
 
 # -------------------------------------------------------------------------------------------------
 # VISUAL HELPERS
 # -------------------------------------------------------------------------------------------------
 function _separator {
-    echo '----------------------------------------------------------'
+    _color magenta '----------------------------------------------------------'
 }
 
 function _show_branch {
