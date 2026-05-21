@@ -331,7 +331,7 @@ function b {
         git branch -a
         echo ''
     else
-        mod
+        # mod
         git switch "$@"
         g
     fi

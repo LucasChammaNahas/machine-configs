@@ -61,7 +61,7 @@ function _run_command_on_files {
         local f="${line:3}"
         f="${f//\"/}"
         all_git_status_files+=("$f")
-    done < <(git status --short)
+    done < <(git status --short --untracked-files)
 
     local selected_files=()
     for letter in "$@"; do
@@ -131,7 +131,7 @@ function _file_selector_log {
         fi
 
         i=$((i + 1))
-    done < <(git status --short -u)
+    done < <(git status --short --untracked-files)
 
     echo ''
     _separator
