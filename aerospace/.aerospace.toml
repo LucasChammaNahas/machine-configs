@@ -49,7 +49,7 @@ persistent-workspaces = [
     'm',
     '.comma',
     '.',
-    '.slash',
+    '/',
 ]
 
 on-mode-changed = []
