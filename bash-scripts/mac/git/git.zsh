@@ -73,7 +73,7 @@ function c {
     if [ -z "$1" ]; then
         git commit
     else
-        git commit -m "$@"
+        git commit -m "$*"
     fi
     _separator
     g
@@ -85,7 +85,7 @@ function ac {
         return 1
     else
         git add .
-        git commit -m "$@"
+        git commit -m "$*"
         _separator
         g
     fi
