@@ -5,8 +5,8 @@ function l {
     _color cyan "$(ls -lAhF | grep '^d')"
     
     echo ''
-    _color magenta '---FILES---'
-    _color magenta "$(ls -lAhF | grep '^-')"
+    _color orange '---FILES---'
+    _color orange "$(ls -lAhF | grep '^-')"
 }
 
 function load {
@@ -43,6 +43,7 @@ function go {
     l
 
     if is_git_repo; then
+        echo ''
         _separator
         g
     fi
