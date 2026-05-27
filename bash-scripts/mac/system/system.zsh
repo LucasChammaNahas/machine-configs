@@ -1,3 +1,14 @@
+unalias l
+function l {
+    echo ''
+    _color cyan '---DIR---'
+    _color cyan "$(ls -lAhF | grep '^d')"
+    
+    echo ''
+    _color magenta '---FILES---'
+    _color magenta "$(ls -lAhF | grep '^-')"
+}
+
 function load {
     echo 'zshrc reloaded...'
     source ~/.zshrc
