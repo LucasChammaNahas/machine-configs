@@ -40,7 +40,7 @@ function go {
         *) builtin cd "$@" ;;
     esac
 
-    ls -l
+    l
 
     if is_git_repo; then
         _separator
