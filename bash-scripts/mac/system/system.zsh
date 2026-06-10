@@ -36,13 +36,15 @@ function go {
         b) builtin cd ~/projects/parrakat/eyf-dashboard-backend ;;
         m) builtin cd ~/projects/parrakat/eyf-new-backend ;;
         w) builtin cd ~/projects/parrakat/parrakat-website ;;
+        z) builtin cd ~/projects/parrakat/users-boilerplate-backend ;;
+        x) builtin cd ~/projects/parrakat/users-boilerplate-frontend ;;
 
         *) builtin cd "$@" ;;
     esac
 
     l
 
-    if is_git_repo; then
+    if _is_git_repo; then
         echo ''
         _separator
         g
