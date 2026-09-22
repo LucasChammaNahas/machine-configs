@@ -108,22 +108,28 @@ function p {
 }
 
 # Lucas Only
-function pp {
-    echo -e "\033[1m\033[38;2;252;196;106m-- FRONTEND --\033[0m"
-    echo ''
-    git -C ~/projects/parrakat/eyf-dashboard-frontend pull
+function numa {
+    if [ -z "$1" ]; then
+        echo "Usage: numa <pull|push|...>"
+        return 1
+    fi
+    local action="$1"
 
+    echo -e "\033[1m\033[38;2;252;196;106m-- USERS FRONTEND --\033[0m"
+    echo ''
+    git -C ~/projects/parrakat/user-management-system/user-management-system-frontend "$action"
     _separator
-
-    echo -e "\033[1m\033[38;2;252;196;106m-- BACKEND --\033[0m"
+    echo -e "\033[1m\033[38;2;252;196;106m-- USERS BACKEND --\033[0m"
     echo ''
-    git -C ~/projects/parrakat/eyf-dashboard-backend pull
-
+    git -C ~/projects/parrakat/user-management-system/user-management-system-backend "$action"
     _separator
-
-    echo -e "\033[1m\033[38;2;252;196;106m-- BACKEND MATHEUS --\033[0m"
+    echo -e "\033[1m\033[38;2;252;196;106m-- NUMA FRONTEND --\033[0m"
     echo ''
-    git -C ~/projects/parrakat/eyf-new-backend pull
+    git -C ~/projects/parrakat/numa/frontend "$action"
+    _separator
+    echo -e "\033[1m\033[38;2;252;196;106m-- NUMA BACKEND --\033[0m"
+    echo ''
+    git -C ~/projects/parrakat/numa/backend "$action"
 }
 
 

@@ -22,24 +22,27 @@ function edit {
     code ~/.oh-my-zsh/custom
 }   
 
+function cwd {
+    pwd | pbcopy 
+    echo 'Copied current working directory to clipboard:'
+    pwd
+}
+
 function go {
     case "$1" in
         projects) builtin cd ~/projects ;;
-        parrakat) builtin cd ~/projects/parrakat ;;
-        lucas)    builtin cd ~/projects/lucas ;;
         zsh)      builtin cd ~/.oh-my-zsh/custom ;;
         config)   builtin cd ~/projects/lucas/machine-configs ;;
-
-        r) builtin cd ~/projects/lucas/fast-reader ;;
-
-        f) builtin cd ~/projects/parrakat/eyf-dashboard-frontend ;;
-        b) builtin cd ~/projects/parrakat/eyf-dashboard-backend ;;
-        m) builtin cd ~/projects/parrakat/eyf-new-backend ;;
-        w) builtin cd ~/projects/parrakat/parrakat-website ;;
-        z) builtin cd ~/projects/parrakat/users-boilerplate-backend ;;
-        x) builtin cd ~/projects/parrakat/users-boilerplate-frontend ;;
-
-        *) builtin cd "$@" ;;
+        p)        builtin cd ~/projects/parrakat ;;
+        l)        builtin cd ~/projects/lucas ;;
+        f)        builtin cd ~/projects/parrakat/numa/frontend ;;
+        b)        builtin cd ~/projects/parrakat/numa/backend ;;
+        uf)       builtin cd ~/projects/parrakat/user-management-system/user-management-system-frontend ;;
+        ub)       builtin cd ~/projects/parrakat/user-management-system/user-management-system-backend ;;
+        numa)     builtin cd ~/projects/parrakat/numa ;;
+        numaf)    builtin cd ~/projects/parrakat/numa/frontend ;;
+        numab)    builtin cd ~/projects/parrakat/numa/backend ;;
+        *)        builtin cd "$@" || return ;;
     esac
 
     l
@@ -49,4 +52,22 @@ function go {
         _separator
         g
     fi
+}
+
+function killnuma {
+    pkill -9 -f "numa/backend"
+    pkill -9 -f "numa/frontend"
+    pkill -9 -f "tsup --watch"
+    pkill -9 -f "turbo run dev"
+    pkill -9 -f "vite"
+
+    for port in 3000 5173 5174 5175; do
+        pids=$(lsof -ti :"$port")
+        if [[ -n "$pids" ]]; then
+            kill -9 $(echo $pids)
+            echo "Killed process(es) on port $port"
+        fi
+    done
+
+    echo "Done."
 }
